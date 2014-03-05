@@ -16,13 +16,17 @@
 //------------------------------------------------------------------------------------------------
 // private interface declaration
 //------------------------------------------------------------------------------------------------
-@interface PNLineChart ()
+@interface PNLineChart (){
+    int selected_point;
+}
 
 @property (nonatomic,strong) NSMutableArray *chartLineArray; // Array[CAShapeLayer]
 
 @property (strong, nonatomic) NSMutableArray *chartPath; //Array of line path, one for each line.
 
 - (void)setDefaultValues;
+
+
 
 @end
 
@@ -62,12 +66,9 @@
 	while (num >1) {
 		CGFloat levelHeight = _chartCavanHeight /5.0;
 		PNChartLabel * label = [[PNChartLabel alloc] initWithFrame:CGRectMake(0.0,-24/*FSJA*/+_chartCavanHeight - index * levelHeight + (levelHeight - yLabelHeight) , 20.0, yLabelHeight)];
-        
-        [label setTextAlignment:NSTextAlignmentRight];
+		[label setTextAlignment:NSTextAlignmentRight];
 		label.text = [NSString stringWithFormat:@"%1.1f",level * index];
 		[self addSubview:label];
-        
-        
         index +=1 ;
 		num -= 1;
 	}
@@ -84,13 +85,10 @@
         for(int index = 0; index < xLabels.count; index++)
         {
             NSString* labelText = xLabels[index];
-            PNChartLabel * label = [[PNChartLabel alloc] initWithFrame:CGRectMake(index * _xLabelWidth + 30.0 ,-30+ self.frame.size.height - 30.0+  _xLabelWidth/2.0, _xLabelWidth, 20.0)];
+            PNChartLabel * label = [[PNChartLabel alloc] initWithFrame:CGRectMake(index * _xLabelWidth + 30.0,-30+ self.frame.size.height - 30.0, _xLabelWidth, 20.0)];
             [label setTextAlignment:NSTextAlignmentCenter];
             label.text = labelText;
-            label.transform = CGAffineTransformMakeRotation(-(M_PI_2));
-            
             [self addSubview:label];
-            
         }
         
     }else{
@@ -114,31 +112,31 @@
     //Get the point user touched
     UITouch *touch = [touches anyObject];
     CGPoint touchPoint = [touch locationInView:self];
-    for (UIBezierPath *path in _chartPath) {
-        CGPathRef originalPath = path.CGPath;
-        CGPathRef strokedPath = CGPathCreateCopyByStrokingPath(originalPath, NULL, 5.0, kCGLineCapRound, kCGLineJoinRound, 3.0);
-        BOOL pathContainsPoint = CGPathContainsPoint(strokedPath, NULL, touchPoint, NO);
-        if (pathContainsPoint)
-        {
-            [_delegate userClickedOnLinePoint:touchPoint lineIndex:[_chartPath indexOfObject:path]];
+    CGFloat rad = 14.0;
+    BOOL hit = NO;
             for (NSArray *linePointsArray in _pathPoints) {
                 for (NSValue *val in linePointsArray) {
                     CGPoint p = [val CGPointValue];
-                    if (p.x + 3.0 > touchPoint.x && p.x - 3.0 < touchPoint.x && p.y + 3.0 > touchPoint.y && p.y - 3.0 < touchPoint.y ) {
+                    if (p.x + rad > touchPoint.x && p.x - rad < touchPoint.x && p.y + rad> touchPoint.y && p.y - rad < touchPoint.y ) {
                         //Call the delegate and pass the point and index of the point
+                        selected_point = [linePointsArray indexOfObject:val];
                         [_delegate userClickedOnLineKeyPoint:touchPoint lineIndex:[_pathPoints indexOfObject:linePointsArray] andPointIndex:[linePointsArray indexOfObject:val]];
+                        hit = YES;
                     }
                 }
             }
             
-        }
-    }
+    
+    if (hit)
+        [self strokeChart];
+    
     
 }
 
 -(void)strokeChart
 {
     _chartPath = [[NSMutableArray alloc] init];
+    _pathPoints = [[NSMutableArray alloc] init];
     //Draw each line
     for (NSUInteger lineIndex = 0; lineIndex < self.chartData.count; lineIndex++) {
         PNLineChartData *chartData = self.chartData[lineIndex];
@@ -176,6 +174,8 @@
             float value = dataItem.y;
 
             CGFloat innerGrade = value / _yValueMax;
+            
+            
             CGPoint point = CGPointMake(index * _xLabelWidth + 30.0 + _xLabelWidth / 2.0, _chartCavanHeight - (innerGrade * _chartCavanHeight) + _xLabelHeight);
             if (index != 0) {
                 
@@ -188,7 +188,11 @@
                  [progressline moveToPoint:CGPointMake( point.x , point.y)];
             }
             
-            UIBezierPath *p = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(point.x-2.0, point.y-2.0, 4.0, 4.0)];
+            CGFloat size = 2.0;
+            
+            if (selected_point == i)
+                size = 6.0;
+            UIBezierPath *p = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(point.x-size, point.y-size, 2*size, 2*size)];
             //[p fill];
             
             CGPathAddPath(dots, nil, p.CGPath);
@@ -285,6 +289,7 @@
     self.userInteractionEnabled = YES;
     _xLabelHeight = 20.0;
     _chartCavanHeight = self.frame.size.height - chartMargin * 2 - _xLabelHeight*2 ;
+    selected_point = -1;
 }
 
 @end
