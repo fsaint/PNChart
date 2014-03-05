@@ -62,9 +62,12 @@
 	while (num >1) {
 		CGFloat levelHeight = _chartCavanHeight /5.0;
 		PNChartLabel * label = [[PNChartLabel alloc] initWithFrame:CGRectMake(0.0,-24/*FSJA*/+_chartCavanHeight - index * levelHeight + (levelHeight - yLabelHeight) , 20.0, yLabelHeight)];
-		[label setTextAlignment:NSTextAlignmentRight];
+        
+        [label setTextAlignment:NSTextAlignmentRight];
 		label.text = [NSString stringWithFormat:@"%1.1f",level * index];
 		[self addSubview:label];
+        
+        
         index +=1 ;
 		num -= 1;
 	}
@@ -81,10 +84,13 @@
         for(int index = 0; index < xLabels.count; index++)
         {
             NSString* labelText = xLabels[index];
-            PNChartLabel * label = [[PNChartLabel alloc] initWithFrame:CGRectMake(index * _xLabelWidth + 30.0,-30+ self.frame.size.height - 30.0, _xLabelWidth, 20.0)];
+            PNChartLabel * label = [[PNChartLabel alloc] initWithFrame:CGRectMake(index * _xLabelWidth + 30.0 ,-30+ self.frame.size.height - 30.0+  _xLabelWidth/2.0, _xLabelWidth, 20.0)];
             [label setTextAlignment:NSTextAlignmentCenter];
             label.text = labelText;
+            label.transform = CGAffineTransformMakeRotation(-(M_PI_2));
+            
             [self addSubview:label];
+            
         }
         
     }else{
