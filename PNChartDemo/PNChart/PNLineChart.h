@@ -11,8 +11,9 @@
 #import <QuartzCore/QuartzCore.h>
 #import "PNChartDelegate.h"
 
-
-
+#define chartMargin     10
+#define yLabelMargin    15
+#define yLabelHeight    11
 
 @interface PNLineChart : UIView
 
@@ -29,29 +30,19 @@
 @property (strong, nonatomic) NSArray * yLabels;
 
 /**
- * Array of `LineChartData` objects, one for each line.
- */
+* Array of `LineChartData` objects, one for each line.
+*/
 @property (strong, nonatomic) NSArray *chartData;
 
 @property (strong, nonatomic) NSMutableArray * pathPoints;
 
 @property (nonatomic) CGFloat xLabelWidth;
 
-@property (nonatomic) CGFloat yValueMax;
+@property (nonatomic) float yValueMax;
 
-@property (nonatomic) CGFloat yValueMin;
+@property (nonatomic) float chartCavanHeight;
 
-@property (nonatomic) NSInteger yLabelNum;
-
-@property (nonatomic) CGFloat yLabelHeight;
-
-@property (nonatomic) CGFloat chartCavanHeight;
-
-@property (nonatomic) CGFloat chartCavanWidth;
-
-@property (nonatomic) CGFloat chartMargin;
-
-
+@property (nonatomic) float xLabelHeight;
 
 @property (nonatomic) BOOL showLabel;
 
