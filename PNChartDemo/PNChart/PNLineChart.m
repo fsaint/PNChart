@@ -85,7 +85,10 @@
         for(int index = 0; index < xLabels.count; index++)
         {
             NSString* labelText = xLabels[index];
-            PNChartLabel * label = [[PNChartLabel alloc] initWithFrame:CGRectMake(index * _xLabelWidth + 30.0,-30+ self.frame.size.height - 30.0, _xLabelWidth, 20.0)];
+            PNChartLabel * label = [[PNChartLabel alloc] initWithFrame:CGRectMake(index * _xLabelWidth + 30.0,-30+ self.frame.size.height - 30.0 + _xLabelWidth/2.0, _xLabelWidth, 20.0)];
+            
+            label.transform = CGAffineTransformMakeRotation(-M_PI_2);
+            
             [label setTextAlignment:NSTextAlignmentCenter];
             label.text = labelText;
             [self addSubview:label];
@@ -158,8 +161,15 @@
 
         CGFloat grade = (float)firstValue / _yValueMax;
         NSMutableArray * linePointsArray = [[NSMutableArray alloc] init];
-        [progressline moveToPoint:CGPointMake( xPosition, _chartCavanHeight - grade * _chartCavanHeight + _xLabelHeight)];
-        [linePointsArray addObject:[NSValue valueWithCGPoint:CGPointMake( xPosition, _chartCavanHeight - grade * _chartCavanHeight + _xLabelHeight)]];
+        
+        NSInteger index = 0;
+
+        CGPoint first =CGPointMake(index * _xLabelWidth + 30.0 + _xLabelWidth / 2.0, _chartCavanHeight - (grade * _chartCavanHeight) + _xLabelHeight);
+        //CGPointMake( xPosition, _chartCavanHeight - grade * _chartCavanHeight + _xLabelHeight);
+        [progressline moveToPoint:first];
+        [linePointsArray addObject:[NSValue valueWithCGPoint:first]];
+        
+        //[linePointsArray addObject:[NSValue valueWithCGPoint:CGPointMake( xPosition, _chartCavanHeight - grade * _chartCavanHeight + _xLabelHeight)]];
         [progressline setLineWidth:3.0];
         [progressline setLineCapStyle:kCGLineCapRound];
         [progressline setLineJoinStyle:kCGLineJoinRound];
@@ -167,8 +177,7 @@
         
         CGMutablePathRef dots =  CGPathCreateMutable();
         
-        NSInteger index = 0;
-        for (NSUInteger i = 0; i < chartData.itemCount; i++) {
+               for (NSUInteger i = 0; i < chartData.itemCount; i++) {
 
             PNLineChartDataItem *dataItem = chartData.getData(i);
             float value = dataItem.y;
@@ -185,7 +194,7 @@
                 
                 
             }else{
-                 [progressline moveToPoint:CGPointMake( point.x , point.y)];
+                 [progressline moveToPoint:point];
             }
             
             CGFloat size = 2.0;
@@ -282,7 +291,7 @@
 - (void)setDefaultValues {
     // Initialization code
     self.backgroundColor = [UIColor whiteColor];
-    self.clipsToBounds   = YES;
+    self.clipsToBounds   = NO;
     self.chartLineArray  = [NSMutableArray new];
     _showLabel           = YES;
     _pathPoints = [[NSMutableArray alloc] init];
