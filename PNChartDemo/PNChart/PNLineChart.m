@@ -85,7 +85,8 @@
         for(int index = 0; index < xLabels.count; index++)
         {
             NSString* labelText = xLabels[index];
-            PNChartLabel * label = [[PNChartLabel alloc] initWithFrame:CGRectMake(index * _xLabelWidth + 30.0,-30+ self.frame.size.height - 30.0 + _xLabelWidth/2.0, _xLabelWidth, 20.0)];
+            PNChartLabel * label = [[PNChartLabel alloc] initWithFrame:CGRectMake(index * _xLabelWidth + 30.0 + _xLabelWidth / 2.0 - w/2.0, self.frame.size.height + 10.0 , w,_xLabelWidth)];
+            label.textAlignment = NSTextAlignmentRight;
             
             label.transform = CGAffineTransformMakeRotation(-M_PI_2);
             
