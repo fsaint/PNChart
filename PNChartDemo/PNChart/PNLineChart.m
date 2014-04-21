@@ -79,18 +79,27 @@
 {
     _xLabels = xLabels;
     
+    NSMutableArray *labs = [NSMutableArray array];
+    
     if(_showLabel){
         _xLabelWidth = (self.frame.size.width - chartMargin - 30.0)/[xLabels count];
         
         for(int index = 0; index < xLabels.count; index++)
         {
             NSString* labelText = xLabels[index];
+            CGFloat w = 200.0;
             PNChartLabel * label = [[PNChartLabel alloc] initWithFrame:CGRectMake(index * _xLabelWidth + 30.0 + _xLabelWidth / 2.0 - w/2.0, self.frame.size.height + 10.0 , w,_xLabelWidth)];
-            label.textAlignment = NSTextAlignmentRight;
-            
+            //frame =CGRectMake(i * CELL_WIDTH-header_height/2.0 + CELL_WIDTH/2.0, (header_height-CELL_WIDTH)/2.0, header_height-1.0, CELL_HEIGHT-1.0);
+
+           
+            //label.backgroundColor = [UIColor redColor];
+            label.alpha = 0.8;
             label.transform = CGAffineTransformMakeRotation(-M_PI_2);
+
             
-            [label setTextAlignment:NSTextAlignmentCenter];
+            [labs addObject:label];
+            
+            [label setTextAlignment:NSTextAlignmentRight];
             label.text = labelText;
             [self addSubview:label];
         }
@@ -98,7 +107,6 @@
     }else{
         _xLabelWidth = (self.frame.size.width)/[xLabels count];
     }
-    
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
